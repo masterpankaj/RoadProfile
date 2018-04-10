@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Rough Road Details</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="styles/bootstrap.css" rel="stylesheet" />
+    <link href="styles/common.css" rel="stylesheet" />
+    <link type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.2/css/ui.jqgrid.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.8.9/jquery.csv.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.15.2/jquery.jqgrid.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js" type="text/javascript"></script>
+
+    <link rel="icon" type="image/png" href="https://cdn.vox-cdn.com/thumbor/GWgXis1BkY5kka5WbUIMeqbnoGA=/0x64:512x448/1200x900/filters:focal(0x64:512x448)/cdn.vox-cdn.com/uploads/chorus_image/image/47935485/original.0.png" />
+
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+        #map {
+            height: 84%;
+            top: 56px;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Verdana,Arial,Helvetica,sans-serif;
+            font-size: 14px;
+        }
+
+        #floating-panel {
+            position: absolute;
+            top: 10px;
+            left: 25%;
+            z-index: 5;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #999;
+            text-align: center;
+            font-family: 'Roboto','sans-serif';
+            line-height: 30px;
+            padding-left: 10px;
+        }
+
+        #floating-panel {
+            background-color: #fff;
+            border: 1px solid #999;
+            left: 25%;
+            padding: 5px;
+            position: absolute;
+            top: 10px;
+            z-index: 5;
+        }
+
+        .active {
+            color: #8fd550 !important;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!--################## HEADER #########################-->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
+                <a class="navbar-brand" runat="server" href="~/">Alten Lean Framework</a>
+            </div>
+            <div class="navbar-collapse collapse" id="sub-header">
+                <ul class="nav navbar-nav">
+
+                    <li><a runat="server" href="RoadProfile.html" class="active">Rough Roads Profile</a></li>
+                    <li><a runat="server" href="potHoleProfile.html">Pot Holes Profile</a></li>
+                    <li><a runat="server" href="Reports.html">Reports</a></li>
+                    <li><a runat="server" href="Analysis.html">Analysis</a></li>
+                    <li><a runat="server" href="rawData.html">RawData</a></li>
+
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <!--################## BODY #########################-->
+        <div id="map"></div>
+
+    <!--################## FOOTER #########################-->
+    <footer>
+        <p>
+            &copy;
+            <script type="text/javascript">
+                document.write(new Date().getFullYear());
+            </script> - All Rights Reserved
+        </p>
+    </footer>
+
+    <!--############# GOOGLE MAPS SCRIPTS #################-->
+    <script>
+
+        
+
+        // This example requires the Visualization library. Include the libraries=visualization
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
+
+        var map, roughRoad, potHolespotHoles;
+        var potholesLimit = 1.15;
+        var minRoughRoad = 0.5;
+        var maxRoughRoad = 0.9;
+        var potholesArray = [];
+        var roughRoadArray = [];
+        var reportdataArray = [];
+		var center_lat,center_long;
+
+
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: {
+
+                    //lat: 37.775, lng: -122.434
+                    //lat: center_lat, lng: center_long
+                    lat: 42.606025, lng: -83.207431
+                },
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+                //mapTypeId: 'satellite'
+            });
+
+            map.addListener('click', function () {
+                //alert('hi');
+
+                $('#videoDiv').hide();
+                $('#videoDiv').css({ 'top': e.pageY - 50, 'left': e.pageX, 'position': 'absolute', 'border': '1px solid black', 'padding': '5px' });
+                $('#videoDiv').show();
+            });
+
+            roughRoad = new google.maps.visualization.HeatmapLayer({
+
+                data: getPoints1(),
+                map: map
+            });
+                   
+            var gradient = [
+                'rgba(0, 255, 255, 0)',
+                'rgba(0, 255, 255, 1)',
+                'rgba(0, 191, 255, 1)',
+                'rgba(0, 127, 255, 1)',
+                'rgba(0, 63, 255, 1)',
+                'rgba(0, 0, 255, 1)',
+                'rgba(0, 0, 223, 1)',
+                'rgba(0, 0, 191, 1)',
+                'rgba(0, 0, 159, 1)',
+                'rgba(0, 0, 127, 1)',
+                'rgba(63, 0, 91, 1)',
+                'rgba(127, 0, 63, 1)',
+                'rgba(191, 0, 31, 1)',
+                'rgba(255, 0, 0, 1)'
+            ]
+            //potHoles.set('gradient', gradient);
+        }
+
+        function toggleHeatmap() {
+        }
+
+        function showRoughRoad() {
+            roughRoad.setMap(roughRoad.getMap() ? null : map);
+        }
+
+        function showpothHoles() {
+            potHoles.setMap(potHoles.getMap() ? null : map);
+        }
+
+        function showReport() {
+            toggleScreen();
+        }
+
+        function changeGradient() {
+            var gradient = [
+                'rgba(0, 0, 255, 0.8)'
+
+            ]
+            roughRoad.set('gradient', roughRoad.get('gradient') ? null : gradient);
+        }
+
+        function changeRadius() {
+            roughRoad.set('radius', roughRoad.get('radius') ? null : 13);
+            potHoles.set('radius', potHoles.get('radius') ? null : 12);
+        }
+
+        function changeOpacity() {
+            roughRoad.set('opacity', roughRoad.get('opacity') ? null : 0.3);
+            potHoles.set('opacity', potHoles.get('opacity') ? null : 0.3);
+        }
+
+
+        function checkCriteriaData(data) {
+
+           // filterOutPothHoleData(data);
+            filterOutRoughRoadData(data);
+            //filterOutReportData(data);
+            initMap();
+                                                 
+
+                                        
+
+        }
+
+        function storeCoordinate(x, y, array) {
+            array.push(x);
+            array.push(y);
+        }
+
+        function storeReportData(a, b, c, d, array) {
+            array.push(a);
+            array.push(b);
+            array.push(c);
+            array.push(d);
+        }
+
+        //to filter pothhole data
+        function filterOutPothHoleData(data) {
+            console.log("filterOutPothHoleData");
+
+            for (var i = 0; i < data.length; i++) {
+                if ((Math.abs(data[i].accelerometer.x) > potholesLimit) || (Math.abs(data[i].accelerometer.y) > potholesLimit)) {
+                    storeCoordinate(data[i].gps.latitude, data[i].gps.longitude, potholesArray);
+                }
+            }
+        }
+
+        //to filter rough road data
+        function filterOutRoughRoadData(responseData) {
+            console.log("filterOutRoughRoadData");
+
+            for (var i = 0; i < responseData.data.length; i++) {
+			 //if(i == 10)
+			 // {
+			 // center_lat=parseFloat(responseData.data[i].coordinates.lat);
+			 // center_long = parseFloat (responseData.data[i].coordinates.long);
+			 // }
+			       if(responseData.data[i].severity == 2)
+				   {
+				   storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long,roughRoadArray)
+				   }
+               
+            }
+        }
+
+        //to filter out the report data
+
+        function filterOutReportData(data) {
+            for (var i = 0; i < data.length; i++) {
+                if ((data[i].accelerometer.x > potholesLimit) || (data[i].accelerometer.y > potholesLimit)) {
+                    storeReportData(data[i].gps.latitude, data[i].gps.longitude, i, Unix_datestamp(data[i].time), reportdataArray);
+                }
+            }
+        }
+
+
+        //to convert the Unix timestamp to normal
+
+        function Unix_timestamp(t) {
+            var dt = new Date(t * 1000);
+            var hr = dt.getHours();
+            var m = "0" + dt.getMinutes();
+            var s = "0" + dt.getSeconds();
+            return hr + "/" + m.substr(-2) + "/" + s.substr(-2);
+        }
+
+        function Unix_datestamp(t) {
+            var dt = new Date(t * 1000);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            var year = dt.getFullYear();
+            var month = months[dt.getMonth()];
+            var date = dt.getDate();
+            return date + "/" + month + "/" + year;
+        }
+
+
+
+        //this function which will toggle the map and report screen
+        function toggleScreen() {
+            var mainFrameOne = document.getElementById("map");
+            var mainFrameTwo = document.getElementById("reportwindow");
+
+            mainFrameOne.style.display = (
+                mainFrameOne.style.display == "none" ? "block" : "none");
+            mainFrameTwo.style.display = (
+                mainFrameTwo.style.display == "none" ? "block" : "none");
+            createTableandPopulateData();
+        }
+
+
+
+        function createTableandPopulateData() {
+        }
+
+        // Heatmap data: 500 Points
+        function getPoints1() {
+            console.log("points1");
+            var roughroadpd = [];
+            console.log(roughRoadArray.length);
+            for (var i = 0; i < roughRoadArray.length; i += 2) {
+                var x = roughRoadArray[i];
+                var y = roughRoadArray[i + 1];
+                console.log("point1" + x + "TWO" + y);
+                var latLng = new google.maps.LatLng(x, y);
+                roughroadpd.push(latLng);
+            }
+
+
+
+            return roughroadpd;
+        }
+
+        function getPoints2() {
+            console.log("points1");
+
+            var pothHolespd = [];
+            console.log(potholesArray.length);
+
+            for (var i = 0; i < potholesArray.length; i += 2) {
+                var x = potholesArray[i];
+                var y = potholesArray[i + 1];
+                console.log("point1" + x + "TWO" + y);
+                var latLng = new google.maps.LatLng(x, y);
+                pothHolespd.push(latLng);
+            }
+
+            return pothHolespd;
+
+        }
+       // $.getJSON("http://localhost:84/data.json", checkCriteriaData);
+	   
+        $(document).ready(function () {
+            $.ajax({
+                url: 'https://por-service.herokuapp.com/api/fetch',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data, textStatus, xhr) {
+                    checkCriteriaData(data);
+                },
+                error: function () { alert('Data collection failed!'); },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('x-access-token', 'f3c6559f-8bbc-443b-8535-f81cbff76e9a');
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                }
+            });
+        });
+        
+
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3K-FQQGspd8VR806fCmexNM5Ip5cs4a0&libraries=visualization&callback=initMap">
+    </script>
+    
+
+</body>
+</html>
