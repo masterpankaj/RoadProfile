@@ -108,6 +108,9 @@
             var dataPointsx = [];
             var dataPointsy = [];
             var dataPointsz = [];
+            var lat = [];
+            var lng = [];
+            var time = [];
 
             var chart = new CanvasJS.Chart("chartContainer", {
                 animationEnabled: true,
@@ -149,13 +152,28 @@
                         color: "#d1048c",
                         showInLegend: true,
                         dataPoints: dataPointsz
-                    }
-
-                ]
+                    },
+                    {
+                        name: "Lat",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: lat
+                    },
+                    {
+                        name: "Lng",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: lng
+                    },
+                    {
+                        name: "Time",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: time
+                    }]
             });
 
             function toggleDataSeries(e) {
-                alert('hi');
                 if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
                     e.dataSeries.visible = false;
                 }
@@ -182,6 +200,21 @@
                     dataPointsz.push({
                         x: i,
                         y: parseFloat(dataJson.data[i].accelerometer.z)
+                    });
+
+                    lat.push({
+                        x: i,
+                        y: dataJson.data[i].coordinates.lat
+                    });
+
+                    lng.push({
+                        x: i,
+                        y: dataJson.data[i].coordinates.long
+                    });
+
+                    time.push({
+                        x: i,
+                        y: dataJson.data[i].time
                     });
                 }
                 chart.render();

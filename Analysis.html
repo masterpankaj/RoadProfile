@@ -112,6 +112,9 @@
 
             
             var dataPoints = [];
+            var lat = [];
+            var lng = [];
+            var time = [];
 
             var chart = new CanvasJS.Chart("chartContainer", {
                 animationEnabled: true,
@@ -134,16 +137,34 @@
                 toolTip: {
                     shared: true
                 },
-                data: [{
+                data: [
+                    {
                     name: "Total G-Force",
                     type: "line",
                     color: "#4286f4",
                     dataPoints: dataPoints
-                }]
+                    },
+                    {
+                        name: "Lat",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: lat
+                    },
+                    {
+                        name: "Lng",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: lng
+                    },
+                    {
+                        name: "Time",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: time
+                    }]
             });
 
             function toggleDataSeries(e) {
-                alert('hi');
                 if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
                     e.dataSeries.visible = false;
                 }
@@ -171,8 +192,23 @@
                     //console.log("GForce" + finalGForce);
                     finalGForce = parseFloat(dataJson.data[i].gforce);
                     dataPoints.push({
-
+                        x: i,
                         y: finalGForce
+                    });
+
+                    lat.push({
+                        x: i,
+                        y: dataJson.data[i].coordinates.lat
+                    });
+
+                    lng.push({
+                        x: i,
+                        y: dataJson.data[i].coordinates.long
+                    });
+
+                    time.push({
+                        x: i,
+                        y: dataJson.data[i].time
                     });
                 }
                 chart.render();
