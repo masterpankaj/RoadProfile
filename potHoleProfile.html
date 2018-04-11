@@ -131,19 +131,13 @@
             });
 
             map.addListener('click', function () {
-                //alert('hi');
-
+               
                 $('#videoDiv').hide();
                 $('#videoDiv').css({ 'top': e.pageY - 50, 'left': e.pageX, 'position': 'absolute', 'border': '1px solid black', 'padding': '5px' });
                 $('#videoDiv').show();
             });
 
-            //roughRoad = new google.maps.visualization.HeatmapLayer({
-
-                //data: getPoints1(),
-               // map: map
-          //  });
-
+            
             potHoles = new google.maps.visualization.HeatmapLayer({
                 data: getPoints2(),
                 map: map
@@ -168,46 +162,28 @@
             potHoles.set('gradient', gradient);
         }
 
-        function toggleHeatmap() {
-        }
-
-        function showRoughRoad() {
-            roughRoad.setMap(roughRoad.getMap() ? null : map);
-        }
-
-        function showpothHoles() {
-            potHoles.setMap(potHoles.getMap() ? null : map);
-        }
-
-        function showReport() {
-            toggleScreen();
-        }
-
-        function changeGradient() {
-            var gradient = [
-                'rgba(0, 0, 255, 0.8)'
-
-            ]
-            roughRoad.set('gradient', roughRoad.get('gradient') ? null : gradient);
-        }
-
-        function changeRadius() {
-            roughRoad.set('radius', roughRoad.get('radius') ? null : 13);
-            potHoles.set('radius', potHoles.get('radius') ? null : 12);
-        }
-
-        function changeOpacity() {
-            roughRoad.set('opacity', roughRoad.get('opacity') ? null : 0.3);
-            potHoles.set('opacity', potHoles.get('opacity') ? null : 0.3);
-        }
-
-
+       
         function checkCriteriaData(responseData) {
 		//alert(responseData.data.length);
 		filterOutPothHoleData(responseData);
 		initMap();
         }
 
+        //to filter pothhole data
+        function filterOutPothHoleData(responseData) {
+
+            for (var i = 0; i < responseData.data.length; i++) {
+                //if(i == 10)
+                //{
+                //center_lat=parseFloat(responseData.data[i].coordinates.lat);
+                //center_long = parseFloat (responseData.data[i].coordinates.long);
+                //}
+                if (responseData.data[i].severity == 3) {
+
+                    storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, potholesArray);
+                }
+            }
+        }
         function storeCoordinate(x, y, array) {
             array.push(x);
             array.push(y);
@@ -220,25 +196,7 @@
             array.push(d);
         }
 
-        //to filter pothhole data
-        //to filter pothhole data
-        function filterOutPothHoleData(responseData) {
-            
-			
-			
-              for (var i = 0; i < responseData.data.length; i++) {
-			  //if(i == 10)
-			  //{
-			  //center_lat=parseFloat(responseData.data[i].coordinates.lat);
-			  //center_long = parseFloat (responseData.data[i].coordinates.long);
-			  //}
-			  if(responseData.data[i].severity == 3)
-			  {
-			  
-			storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, potholesArray);
-			}
-			}
-        }
+       
 
         //to filter out the report data
         function filterOutReportData(data) {

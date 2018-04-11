@@ -163,23 +163,11 @@
                 'rgba(191, 0, 31, 1)',
                 'rgba(255, 0, 0, 1)'
             ]
-            //potHoles.set('gradient', gradient);
+            roughRoad.set('gradient', gradient);
         }
 
-        function toggleHeatmap() {
-        }
-
-        function showRoughRoad() {
-            roughRoad.setMap(roughRoad.getMap() ? null : map);
-        }
-
-        function showpothHoles() {
-            potHoles.setMap(potHoles.getMap() ? null : map);
-        }
-
-        function showReport() {
-            toggleScreen();
-        }
+        
+        
 
         function changeGradient() {
             var gradient = [
@@ -189,15 +177,7 @@
             roughRoad.set('gradient', roughRoad.get('gradient') ? null : gradient);
         }
 
-        function changeRadius() {
-            roughRoad.set('radius', roughRoad.get('radius') ? null : 13);
-            potHoles.set('radius', potHoles.get('radius') ? null : 12);
-        }
-
-        function changeOpacity() {
-            roughRoad.set('opacity', roughRoad.get('opacity') ? null : 0.3);
-            potHoles.set('opacity', potHoles.get('opacity') ? null : 0.3);
-        }
+               
 
 
         function checkCriteriaData(data) {
