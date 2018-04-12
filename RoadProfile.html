@@ -122,12 +122,12 @@
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 12,
+                zoom: 11.5,
                 center: {
 
-                    //lat: 37.775, lng: -122.434
                     //lat: center_lat, lng: center_long
-                    lat: 42.606025, lng: -83.207431
+                    //lat: 42.606025, lng: -83.207431 // Troy
+                    lat: 40.236449, lng: -83.367143 // MarrysVille
                 },
                 mapTypeId: google.maps.MapTypeId.ROADMAP
                 //mapTypeId: 'satellite'
@@ -327,7 +327,27 @@
                 success: function (data, textStatus, xhr) {
                     checkCriteriaData(data);
                 },
-                error: function () { alert('Data collection failed!'); },
+                error: function (xhr, exception) {
+                    //alert('Error Occured !!\nStatus ' + xhr.status + '\nError Details : '+thrownError);
+                    var msg = '';
+                    if (xhr.status === 0) {
+                        msg = 'No connection, Please Verify Network.';
+                    } else if (xhr.status == 404) {
+                        msg = 'Requested page not found. [404]';
+                    } else if (xhr.status == 500) {
+                        msg = 'Internal Server Error [500].';
+                    } else if (exception === 'parsererror') {
+                        msg = 'Requested JSON parse failed.';
+                    } else if (exception === 'timeout') {
+                        msg = 'Time out error.';
+                    } else if (exception === 'abort') {
+                        msg = 'Ajax request aborted.';
+                    } else {
+                        msg = 'Uncaught Error.\n' + xhr.responseText;
+                    }
+
+                    alert(msg);
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader('x-access-token', 'f3c6559f-8bbc-443b-8535-f81cbff76e9a');
                     xhr.setRequestHeader('Content-Type', 'application/json');
