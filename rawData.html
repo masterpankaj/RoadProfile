@@ -111,6 +111,7 @@
             var lat = [];
             var lng = [];
             var time = [];
+            var deviceName = [];
 
             var chart = new CanvasJS.Chart("chartContainer", {
                 animationEnabled: true,
@@ -170,7 +171,14 @@
                         type: "line",
                         color: "#4286f4",
                         dataPoints: time
-                    }]
+                    },
+                    {
+                        name: "DeviceName",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: deviceName
+                    }
+                ]
             });
 
             function toggleDataSeries(e) {
@@ -215,6 +223,11 @@
                     time.push({
                         x: i,
                         y: dataJson.data[i].time
+                    });
+
+                    deviceName.push({
+                        x: i,
+                        y: dataJson.data[i].device_name
                     });
                 }
                 chart.render();
