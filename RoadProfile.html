@@ -224,19 +224,10 @@
         function filterOutRoughRoadData(responseData) {
             console.log("filterOutRoughRoadData");
 
-            for (var i = 0; i < responseData.data.length; i++) {
-			 
-                if (responseData.data[i].severity == 2 || responseData.data[i].severity == 1)
-				   {
-                    storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, roughRoadArray)
-                    console.log(i);
-				   }
-               
-            }
+            storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, roughRoadArray)
         }
 
         //to filter out the report data
-
         function filterOutReportData(data) {
             for (var i = 0; i < data.length; i++) {
                 if ((data[i].accelerometer.x > potholesLimit) || (data[i].accelerometer.y > potholesLimit)) {
