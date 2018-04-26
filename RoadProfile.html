@@ -226,10 +226,7 @@
 
             for (var i = 0; i < responseData.data.length; i++) {
 			 
-                if (responseData.data[i].severity == 2 || esponseData.data[i].severity == 1)
-				   {
-				   storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long,roughRoadArray)
-				   }
+                storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, roughRoadArray)
                
             }
         }
