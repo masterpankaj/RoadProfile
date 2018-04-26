@@ -225,12 +225,8 @@
             console.log("filterOutRoughRoadData");
 
             for (var i = 0; i < responseData.data.length; i++) {
-			 //if(i == 10)
-			 // {
-			 // center_lat=parseFloat(responseData.data[i].coordinates.lat);
-			 // center_long = parseFloat (responseData.data[i].coordinates.long);
-			 // }
-			       if(responseData.data[i].severity == 2)
+			 
+                if (responseData.data[i].severity == 2 || esponseData.data[i].severity == 1)
 				   {
 				   storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long,roughRoadArray)
 				   }
