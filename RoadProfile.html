@@ -111,17 +111,11 @@
         // This example requires the Visualization library. Include the libraries=visualization
         // parameter when you first load the API. For example:
         // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
+        var t1, t2;
+        var d = new Date();
 
-        var map, roughRoad, potHolespotHoles;
-        var potholesLimit = 1.15;
-        var minRoughRoad = 0.5;
-        var maxRoughRoad = 0.9;
-        var potholesArray = [];
+        var map, roughRoad;
         var roughRoadArray = [];
-        var reportdataArray = [];
-		var center_lat,center_long;
-
-
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -129,10 +123,10 @@
                 center: {
 
                     //lat: center_lat, lng: center_long
-                    //lat: 42.606025, lng: -83.207431 // Troy
+                    lat: 42.606025, lng: -83.207431 // Troy
                     //lat: 40.236449, lng: -83.367143 // MarrysVille 1
-                    lat: 40.097853, lng: -83.156643 // MarrysVille 2
-                    
+                    //lat: 40.097853, lng: -83.156643 // MarrysVille 2
+
                 },
                 mapTypeId: google.maps.MapTypeId.ROADMAP
                 //mapTypeId: 'satellite'
@@ -148,10 +142,10 @@
 
             roughRoad = new google.maps.visualization.HeatmapLayer({
 
-                data: getPoints1(),
+                data: roughRoadArray,
                 map: map
             });
-                   
+
             var gradient = [
                 'rgba(0, 255, 255, 0)',
                 'rgba(0, 255, 255, 1)',
@@ -171,151 +165,26 @@
             roughRoad.set('gradient', gradient);
         }
 
-        
-        
-
-        function changeGradient() {
-            var gradient = [
-                'rgba(0, 0, 255, 0.8)'
-
-            ]
-            roughRoad.set('gradient', roughRoad.get('gradient') ? null : gradient);
-        }
-
-               
-
-
         function checkCriteriaData(data) {
 
-           // filterOutPothHoleData(data);
             filterOutRoughRoadData(data);
-            //filterOutReportData(data);
             initMap();
-                                                 
-
-                                        
-
+            t2 = d.getTime();
+            alert((t2 - t1) / 1000);
         }
 
-        function storeCoordinate(x, y, array) {
-            array.push(x);
-            array.push(y);
-        }
-
-        function storeReportData(a, b, c, d, array) {
-            array.push(a);
-            array.push(b);
-            array.push(c);
-            array.push(d);
-        }
-
-        //to filter pothhole data
-        function filterOutPothHoleData(data) {
-            console.log("filterOutPothHoleData");
-
-            for (var i = 0; i < data.length; i++) {
-                if ((Math.abs(data[i].accelerometer.x) > potholesLimit) || (Math.abs(data[i].accelerometer.y) > potholesLimit)) {
-                    storeCoordinate(data[i].gps.latitude, data[i].gps.longitude, potholesArray);
-                }
-            }
-        }
 
         //to filter rough road data
         function filterOutRoughRoadData(responseData) {
             console.log("filterOutRoughRoadData");
 
             for (var i = 0; i < responseData.data.length; i++) {
-			 
-                storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, roughRoadArray)
-               
+
+                //storeCoordinate(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, roughRoadArray); 
+                roughRoadArray.push(new google.maps.LatLng(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long));
+
             }
         }
-
-        //to filter out the report data
-
-        function filterOutReportData(data) {
-            for (var i = 0; i < data.length; i++) {
-                if ((data[i].accelerometer.x > potholesLimit) || (data[i].accelerometer.y > potholesLimit)) {
-                    storeReportData(data[i].gps.latitude, data[i].gps.longitude, i, Unix_datestamp(data[i].time), reportdataArray);
-                }
-            }
-        }
-
-
-        //to convert the Unix timestamp to normal
-
-        function Unix_timestamp(t) {
-            var dt = new Date(t * 1000);
-            var hr = dt.getHours();
-            var m = "0" + dt.getMinutes();
-            var s = "0" + dt.getSeconds();
-            return hr + "/" + m.substr(-2) + "/" + s.substr(-2);
-        }
-
-        function Unix_datestamp(t) {
-            var dt = new Date(t * 1000);
-            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var year = dt.getFullYear();
-            var month = months[dt.getMonth()];
-            var date = dt.getDate();
-            return date + "/" + month + "/" + year;
-        }
-
-
-
-        //this function which will toggle the map and report screen
-        function toggleScreen() {
-            var mainFrameOne = document.getElementById("map");
-            var mainFrameTwo = document.getElementById("reportwindow");
-
-            mainFrameOne.style.display = (
-                mainFrameOne.style.display == "none" ? "block" : "none");
-            mainFrameTwo.style.display = (
-                mainFrameTwo.style.display == "none" ? "block" : "none");
-            createTableandPopulateData();
-        }
-
-
-
-        function createTableandPopulateData() {
-        }
-
-        // Heatmap data: 500 Points
-        function getPoints1() {
-            console.log("points1");
-            var roughroadpd = [];
-            console.log(roughRoadArray.length);
-            for (var i = 0; i < roughRoadArray.length; i += 2) {
-                var x = roughRoadArray[i];
-                var y = roughRoadArray[i + 1];
-                console.log("point1" + x + "TWO" + y);
-                var latLng = new google.maps.LatLng(x, y);
-                roughroadpd.push(latLng);
-            }
-
-
-
-            return roughroadpd;
-        }
-
-        function getPoints2() {
-            console.log("points1");
-
-            var pothHolespd = [];
-            console.log(potholesArray.length);
-
-            for (var i = 0; i < potholesArray.length; i += 2) {
-                var x = potholesArray[i];
-                var y = potholesArray[i + 1];
-                console.log("point1" + x + "TWO" + y);
-                var latLng = new google.maps.LatLng(x, y);
-                pothHolespd.push(latLng);
-            }
-
-            return pothHolespd;
-
-        }
-       // $.getJSON("http://localhost:84/data.json", checkCriteriaData);
 	   
         $(document).ready(function () {
             $.ajax({
