@@ -165,7 +165,7 @@
             roughRoad.set('gradient', gradient);
         }
 
-        function checkCriteriaData(data) {
+        function roughRoadData(data) {
             
             filterOutRoughRoadData(data);
             initMap();
@@ -195,7 +195,7 @@
                 success: function (data, textStatus, xhr) {
                     d = new Date();
                     t1 = d.getTime();
-                    checkCriteriaData(data);
+                    roughRoadData(data);
                 },
                 error: function (xhr, exception) {
                     //alert('Error Occured !!\nStatus ' + xhr.status + '\nError Details : '+thrownError);
