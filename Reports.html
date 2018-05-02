@@ -36,6 +36,7 @@
             top: 0px;
             /*position: relative;*/
         }
+
         th {
             height: 18px;
             vertical-align: middle;
@@ -43,10 +44,12 @@
             top: 50px;
             border: solid 1px #000000;
         }
+
         td {
             height: 10px;
             vertical-align: middle;
         }
+
         .active {
             color: #8fd550 !important;
         }
@@ -60,7 +63,7 @@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"></button>
                 <a class="navbar-brand" runat="server" href="~/">
-                    <img src="../RoadProfile/images/hondalogo.png" alt="Honda" style="width:200px;" />
+                    <img src="/images/Honda-Logo.png" alt="Honda" style="width:200px;" /    >
                     Road Data MVP
                 </a>
             </div>
@@ -80,8 +83,8 @@
     </div>
 
     <!--################## BODY #########################-->
-    <label style="padding-left: 20px; padding-top: 55px;"> PotHole Report</label>
-    <div id="reportDiv" style="align-content: left; position: absolute; padding-left: 20px; padding-top: 10px;">
+    <label style="padding-left: 20px; padding-top: 65px;"> PotHole Report</label>
+    <div id="reportDiv" style="align-content: left; position: absolute; padding-left: 20px; padding-top: 2px; margin-bottom:50px">
 
     </div>
     <!--################## FOOTER #########################-->
@@ -102,88 +105,16 @@
         var minRoughRoad = 0.5;
         var maxRoughRoad = 0.9;
 
-        function checkCriteriaData(responseData) {
+        function reportData(responseData) {
 
-            filterOutReportData(responseData);
-            console.log("report data" + reportdataArray);
-            myFunction();
+            //filterOutReportData(responseData);
+            console.log("report data Printing");
+            //myFunction();
+            createReport(responseData);
         }
-
-
-
-
-        //to filter out the report data
-        function filterOutReportData(responseData) {
-
-            storeReportData('Latitude', 'Longitude', 'Severity', 'Since', reportdataArray);
-
-            for (var i = 0; i < responseData.data.length; i++) {
-               
-                    reportDataLengthCounter++;
-                    storeReportData(responseData.data[i].coordinates.lat, responseData.data[i].coordinates.long, responseData.data[i].severity, responseData.data[i].time, reportdataArray);
-                
-            }
-        }
-
-        function storeReportData(a, b, c, d, array) {
-            array.push(a);
-            array.push(b);
-            array.push(c);
-            array.push(d);
-        }
-
-        function Unix_datestamp(t) {
-            var dt = new Date(t * 1000);
-            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            var year = dt.getFullYear();
-            var month = months[dt.getMonth()];
-            var date = dt.getDate();
-            return date + "/" + month + "/" + year;
-        }
-
-
-        //function which filter out the Severity
-
-        function findSeverityValue(x, y) {
-            var highest;
-            if (Math.abs(x) > Math.abs(y))
-                highest = Math.abs(x);
-            else
-                highest = Math.abs(y);
-
-            return highest;
-
-
-        }
-
-
-
-        //function to assign the severity for pothhole
-
-        function assignSeverity(highest) {
-            var severityValue;
-            //alert(highest);
-            //if (highest >= 1.3) { severityValue = 3; }
-            //if (highest =< 1.29 && highest < 1.15) { severityValue = 2; }
-            //if (highest =< 1.14 && highest < 1) { severityValue = 1; }
-
-            if (highest > 1 && highest < 1.3) {
-                severityValue = 1;
-            }
-            else if (highest > 1.14 && highest < 1.3) {
-                severityValue = 2;
-            }
-            else {
-                severityValue = 3;
-            }
-            return severityValue;
-
-        }
-
 
         //this function will generate the table
-
-        function myFunction() {
+        function createReport(responseData) {
 
             String.prototype.isNumber = function () { return /^\d+$/.test(this); }
             var latestColumn = 0;
@@ -197,72 +128,80 @@
             var tbl = document.createElement("table");
             var tblBody = document.createElement("tbody");
 
+            var row = document.createElement("tr");
+            var cell1 = document.createElement("th");
+            var cell2 = document.createElement("th");
+            var cell3 = document.createElement("th");
+            var cell4 = document.createElement("th");
+            cell1.appendChild(document.createTextNode("Latitude"));
+            row.appendChild(cell1);
+            cell1.style.background = "rgb(91,177,235)";
+            cell1.setAttribute("width", "200px");
+            cell1.style.textAlign = "center";
+            cell2.appendChild(document.createTextNode("Longitude"));
+            row.appendChild(cell2);
+            cell2.style.background = "rgb(91,177,235)";
+            cell2.setAttribute("width", "200px");
+            cell2.style.textAlign = "center";
+            cell3.appendChild(document.createTextNode("Severity"));
+            row.appendChild(cell3);
+            cell3.style.background = "rgb(91,177,235)";
+            cell3.setAttribute("width", "200px");
+            cell3.style.textAlign = "center";
+            cell4.appendChild(document.createTextNode("Since"));
+            row.appendChild(cell4);
+            cell4.style.background = "rgb(91,177,235)";
+            cell4.setAttribute("width", "200px");
+            cell4.style.textAlign = "center";
+
+            tblBody.appendChild(row);
+
+
             // creating all cells
-            for (var i = 0; i <= reportDataLengthCounter; i++) {
+            for (var i = 0; i < responseData.data.length; i++) {
                 // creates a table row
-                var row = document.createElement("tr");
-                for (var j = 0; j <= 3; j++) {
-                    // Create a <td> element and a text node, make the text
-                    // node the contents of the <td>, and put the <td> at
-                    // the end of the table row
-                    if (i == 0) { var cell = document.createElement("th"); }
-                    else { var cell = document.createElement("td"); }
-                    var cellText = document.createTextNode(reportdataArray[counter]);
-                    cell.appendChild(cellText);
-                    row.appendChild(cell);
-                    
-                    console.log(reportdataArray[counter]);
 
-                    //if(reportdataArray[counter].isNumber)
-                    //{
-                    //cell.setAttribute("align", "center");
+                row = document.createElement("tr");
+                // Create a <td> element and a text node, make the text
+                // node the contents of the <td>, and put the <td> at
+                // the end of the table row
+                cell1 = document.createElement("td");
+                cell2 = document.createElement("td");
+                cell3 = document.createElement("td");
+                cell4 = document.createElement("td");
 
-                    if (reportdataArray[counter] == 'Since') {
-                        
-                        cell.setAttribute("width", "200px");
-                        cell.style.textAlign = "center";
-                        }
-                    else
-                        {
-                        cell.setAttribute("width", "150px");
-                        cell.style.textAlign = "center";
-                        }
-                    if (reportdataArray[counter] == 'Latitude' || reportdataArray[counter] == 'Longitude' || reportdataArray[counter] == 'Severity' || reportdataArray[counter] == 'Since')
-                    {
-                        cell.style.background = "rgb(91,177,235)";
-                    }
-                    else if (reportdataArray[counter] == 3) {
-                        cell.style.background = "rgb(255,0,0)";
-                        cell.style.textAlign = "center";
-                        console.log("severity3");
-                    }
-                    else if (reportdataArray[counter] == 2) {
-                        cell.style.background = "rgb(255,191,0)";
-                        cell.style.textAlign = "center";
-                        console.log("severity2");
+                var cellText = document.createTextNode(responseData.data[i].coordinates.lat);
+                cell1.appendChild(cellText);
+                cell1.style.textAlign = "center";
+                row.appendChild(cell1);
+                cellText = document.createTextNode(responseData.data[i].coordinates.long);
+                cell2.appendChild(cellText);
+                cell2.style.textAlign = "center";
+                row.appendChild(cell2);
+                cellText = document.createTextNode(responseData.data[i].severity);
+                cell3.appendChild(cellText);
+                cell3.style.textAlign = "center";
 
-                    }
-                    else {
-                        console.log("severity1");
-                        cell.style.textAlign = "center";
-
-                    }
-                    counter++;
-
-
-
-
-
+                if (responseData.data[i].severity == "3") {
+                    cell3.style.background = "rgb(255,0,0)";
                 }
+                else if (responseData.data[i].severity == "2") {
+                    cell3.style.background = "rgb(255,191,0)";
+                }
+                row.appendChild(cell3);
+                cellText = document.createTextNode(responseData.data[i].time);
+                cell4.appendChild(cellText);
+                cell4.style.textAlign = "center";
+                row.appendChild(cell4);
+
                 tblBody.appendChild(row);
             }
 
             // add the row to the end of the table body
-                        
+
             // put the <tbody> in the <table>
             tbl.appendChild(tblBody);
             // appends <table> into <body>
-            //body.appendChild(tbl);
             div.appendChild(tbl);
             body.appendChild(div);
             // sets the border attribute of tbl to 2;
@@ -271,36 +210,27 @@
             tbl.setAttribute("cellSpacing", "3");
             tbl.setAttribute("align", "center");
 
-            //div.setAttribute("height", "100px");
-            //div.setAttribute("overflow", "auto");
-
-
-
         }
 
-
-        //$.getJSON("http://localhost:84/data.json", checkCriteriaData);
-		
-		$(document).ready(function () {
+        $(document).ready(function () {
             $.ajax({
                 url: 'https://por-service.herokuapp.com/api/fetch?severity=1,2,3',
-		  
-          type: 'GET',
-          dataType: 'json',
-          success:checkCriteriaData,
-	
-	
-		error: function()
-		  {
-		  alert('Please try again later!');
-		  },
-          beforeSend: function setHeader(xhr) {
-        xhr.setRequestHeader('x-access-token', 'f3c6559f-8bbc-443b-8535-f81cbff76e9a');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-      }
-	  
-	  });
-	  });
+
+                type: 'GET',
+                dataType: 'json',
+                success: reportData,
+
+
+                error: function () {
+                    alert('Please try again later!');
+                },
+                beforeSend: function setHeader(xhr) {
+                    xhr.setRequestHeader('x-access-token', 'f3c6559f-8bbc-443b-8535-f81cbff76e9a');
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                }
+
+            });
+        });
 
     </script>
 
