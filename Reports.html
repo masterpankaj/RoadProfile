@@ -132,25 +132,35 @@
             var tblBody = document.createElement("tbody");
 
             var row = document.createElement("tr");
+            var cell0 = document.createElement("th");
             var cell1 = document.createElement("th");
             var cell2 = document.createElement("th");
             var cell3 = document.createElement("th");
             var cell4 = document.createElement("th");
+            cell0.appendChild(document.createTextNode("SR#"));
+            row.appendChild(cell0);
+            cell0.style.background = "rgb(91,177,235)";
+            cell0.setAttribute("width", "70px");
+            cell0.style.textAlign = "center";
+
             cell1.appendChild(document.createTextNode("Latitude"));
             row.appendChild(cell1);
             cell1.style.background = "rgb(91,177,235)";
             cell1.setAttribute("width", "200px");
             cell1.style.textAlign = "center";
+
             cell2.appendChild(document.createTextNode("Longitude"));
             row.appendChild(cell2);
             cell2.style.background = "rgb(91,177,235)";
             cell2.setAttribute("width", "200px");
             cell2.style.textAlign = "center";
+
             cell3.appendChild(document.createTextNode("Severity"));
             row.appendChild(cell3);
             cell3.style.background = "rgb(91,177,235)";
             cell3.setAttribute("width", "200px");
             cell3.style.textAlign = "center";
+
             cell4.appendChild(document.createTextNode("Since"));
             row.appendChild(cell4);
             cell4.style.background = "rgb(91,177,235)";
@@ -168,19 +178,27 @@
                 // Create a <td> element and a text node, make the text
                 // node the contents of the <td>, and put the <td> at
                 // the end of the table row
+                cell0 = document.createElement("td")
                 cell1 = document.createElement("td");
                 cell2 = document.createElement("td");
                 cell3 = document.createElement("td");
                 cell4 = document.createElement("td");
 
+                var cellText = document.createTextNode(i + 1);
+                cell0.appendChild(cellText);
+                cell0.style.textAlign = "center";
+                row.appendChild(cell0);
+
                 var cellText = document.createTextNode(responseData.data[i].coordinates.lat);
                 cell1.appendChild(cellText);
                 cell1.style.textAlign = "center";
                 row.appendChild(cell1);
+
                 cellText = document.createTextNode(responseData.data[i].coordinates.long);
                 cell2.appendChild(cellText);
                 cell2.style.textAlign = "center";
                 row.appendChild(cell2);
+
                 cellText = document.createTextNode(responseData.data[i].severity);
                 cell3.appendChild(cellText);
                 cell3.style.textAlign = "center";
@@ -192,6 +210,7 @@
                     cell3.style.background = "rgb(255,191,0)";
                 }
                 row.appendChild(cell3);
+
                 cellText = document.createTextNode(responseData.data[i].time);
                 cell4.appendChild(cellText);
                 cell4.style.textAlign = "center";

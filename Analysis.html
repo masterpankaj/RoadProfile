@@ -127,7 +127,7 @@
                 title: {
                     text: "Road Condition Analysis"
                 },
-               
+
                 axisY: {
                     includeZero: false,
                     title: "g-force"
@@ -142,10 +142,10 @@
                 },
                 data: [
                     {
-                    name: "Total G-Force",
-                    type: "line",
-                    color: "#4286f4",
-                    dataPoints: dataPoints
+                        name: "Total G-Force",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: dataPoints
                     },
                     {
                         name: "Lat",
@@ -164,7 +164,14 @@
                         type: "line",
                         color: "#4286f4",
                         dataPoints: time
-                    }]
+                    },
+                    {
+                        name: "Velocity",
+                        type: "line",
+                        color: "#4286f4",
+                        dataPoints: vel
+                    }
+                ]
             });
 
             function toggleDataSeries(e) {
@@ -181,18 +188,7 @@
                 var sqX, sqY, sqZ, sumofthree, sqrtofSum, finalGForce;
                 for (var i = 0; i < dataJson.data.length; i++) {
 
-                    //sqX = Math.pow(Math.abs(dataJson.data[i].accelerometer.x), 2);
-                    //sqY = Math.pow(Math.abs(dataJson.data[i].accelerometer.y), 2);
-                    //sqZ = Math.pow(Math.abs(dataJson.data[i].accelerometer.z), 2);
-                    //console.log("sqX"+sqX);
-                    //console.log("sqY"+sqY);
-                    //console.log("sqZ" + sqZ);
-                    //sumofthree = sqX + sqY + sqZ;
-                    //console.log("sumofthree" + sumofthree);
-                    //sqrtofSum = Math.sqrt(sumofthree);
-                    //console.log("sqrtofSum" + sqrtofSum);
-                    //finalGForce = sqrtofSum / 9.81;
-                    //console.log("GForce" + finalGForce);
+
                     finalGForce = parseFloat(dataJson.data[i].gforce);
                     dataPoints.push({
                         x: i,
@@ -213,6 +209,12 @@
                         x: i,
                         y: dataJson.data[i].time
                     });
+
+                    vel.push({
+                        x: i,
+                        y: (dataJson.data[i].speed + "mph")
+                    });
+
                 }
                 chart.render();
 
